@@ -6,6 +6,11 @@
 
 -include_lib("eqc/include/eqc.hrl").
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% The dlist properties are tested against the counterpart operations   %
+%%% for Erlang lists.                                                    %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 prop_cons_d_list() ->
     ?FORALL(
         L,
