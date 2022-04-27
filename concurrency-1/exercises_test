@@ -1,0 +1,97 @@
+#!/usr/bin/env escript
+
+-import(exercises, [n_connected_cells/2]).
+
+main([]) ->
+    error_logger:tty(false),
+
+    io:fwrite("Trying ping...\n"),
+    Ping = spawn(fun exercises:ping/0),
+    Ping ! {req, pong, self()},
+    receive
+        {ack, pong} -> ok
+    end,
+    Ping ! garbage,
+    Ping ! {req, ok, self()},
+    receive
+        {ack, ok} -> ok
+    end,
+
+    io:fwrite("Trying fibserver...\n"),
+    Fib = spawn(fun exercises:fibserver/0),
+    Fib ! {fib, 20, self()},
+    receive
+        {fib, 20, is, 6765} -> ok
+    end,
+    Fib ! garbage,
+    Fib ! {fib, -1, self()},
+    Fib ! {fib, 0, self()},
+    receive
+        {fib, 0, is, 0} -> ok
+    end,
+
+    io:fwrite("Trying fibserver in parallel...\n"),
+    lists:map(
+        fun(_) ->
+            spawn_link(fun() ->
+                Fib ! {fib, 50, self()},
+                receive
+                    {fib, 50, is, 12586269025} -> ok;
+                    _ -> exit("Fail")
+                end
+            end)
+        end,
+        lists:seq(1, 1000)
+    ),
+
+    io:fwrite("Trying largest_number...\n"),
+    LargestNumber = spawn(fun exercises:largest_number/0),
+    LargestNumber ! {statistics, self()},
+    receive
+        {0, 0} -> ok
+    end,
+    LargestNumber ! {query, self()},
+    receive
+        {largest, none} -> ok
+    end,
+    LargestNumber ! {put, 42},
+    LargestNumber ! {put, garbage},
+    LargestNumber ! {query, self()},
+    receive
+        {largest, 42} -> ok
+    end,
+    LargestNumber ! {put, 0},
+    LargestNumber ! {query, self()},
+    LargestNumber ! more_garbage,
+    receive
+        {largest, 42} -> ok
+    end,
+    LargestNumber ! {put, 420},
+    LargestNumber ! {query, self()},
+    receive
+        {largest, 420} -> ok
+    end,
+    LargestNumber ! {statistics, self()},
+    receive
+        {3, 4} -> ok
+    end,
+
+    io:fwrite("Trying n_connected_cells...\n"),
+    OneCell = n_connected_cells(1, self()),
+    OneCell ! hello_you,
+    receive
+        hello_you -> ok
+    end,
+
+    FiveCells = n_connected_cells(5, self()),
+    FiveCells ! hello_you_all,
+    receive
+        hello_you_all -> ok
+    end,
+
+    FiveCells ! bye,
+    receive
+        bye -> ok
+    end,
+
+    io:fwrite("Tests passed.\n").

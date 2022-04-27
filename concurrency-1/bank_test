@@ -1,0 +1,44 @@
+#!/usr/bin/env escript
+
+-import(bank, [
+    create_bank/0,
+    new_account/2,
+    withdraw_money/3,
+    deposit_money/3,
+    transfer/4,
+    balance/2
+]).
+
+main([]) ->
+    io:fwrite("Trying bank...\n"),
+    Bank = create_bank(),
+    Account1 = "43$&*(1",
+    Account2 = "823%!#2",
+    Account3 = "^*&4234",
+
+    true = new_account(Bank, Account1),
+    false = new_account(Bank, Account1),
+    0 = balance(Bank, Account1),
+    {'EXIT', _} = catch balance(Bank, Account2),
+    0 = withdraw_money(Bank, Account1, 0),
+    {'EXIT', _} = catch withdraw_money(Bank, Account2, 10),
+    {'EXIT', _} = catch withdraw_money(Bank, Account1, -20),
+    {'EXIT', _} = catch withdraw_money(Bank, Account1, 20),
+    0 = deposit_money(Bank, Account1, 0),
+    20 = deposit_money(Bank, Account1, 20),
+    30 = deposit_money(Bank, Account1, 10),
+    {'EXIT', _} = catch deposit_money(Bank, Account2, 20),
+    {'EXIT', _} = catch deposit_money(Bank, Account1, -10),
+    5 = withdraw_money(Bank, Account1, 5),
+    25 = balance(Bank, Account1),
+    true = new_account(Bank, Account2),
+    {'EXIT', _} = catch transfer(Bank, Account2, Account1, 10),
+    {'EXIT', _} = catch transfer(Bank, Account1, Account2, -10),
+    0 = transfer(Bank, Account2, Account1, 0),
+    10 = transfer(Bank, Account1, Account2, 10),
+    15 = balance(Bank, Account1),
+    10 = balance(Bank, Account2),
+    {'EXIT', _} = catch transfer(Bank, Account1, Account3, 10),
+    {'EXIT', _} = catch transfer(Bank, Account3, Account1, 10),
+
+    io:fwrite("Tests passed.\n").

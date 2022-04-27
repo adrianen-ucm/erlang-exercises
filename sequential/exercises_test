@@ -1,0 +1,69 @@
+#!/usr/bin/env escript
+
+-import(eqc, [module/1]).
+-import(exercises, [
+    fib/1,
+    sum/1,
+    member/2,
+    insert/2,
+    sort/1,
+    fib_with_index/1,
+    keyfind/2,
+    merge/2
+]).
+
+main([]) ->
+    io:fwrite("Trying fib...\n"),
+    0 = fib(0),
+    1 = fib(1),
+    1 = fib(2),
+    2 = fib(3),
+    3 = fib(4),
+    267914296 = fib(42),
+
+    io:fwrite("Trying sum...\n"),
+    0 = sum([]),
+    4 = sum([4]),
+    10 = sum([1, 2, 3, 4]),
+    7 = sum([5, a, 2]),
+
+    io:fwrite("Trying member...\n"),
+    false = member(0, []),
+    true = member(0, [1, 2, a, 0]),
+
+    io:fwrite("Trying insert...\n"),
+    [0] = insert(0, []),
+    [0, 1] = insert(0, [1]),
+    [1, 5, 5, 8] = insert(5, [1, 5, 8]),
+
+    io:fwrite("Trying sort...\n"),
+    [] = sort([]),
+    [1] = sort([1]),
+    [1, 2, 2, 4, 4, 6] = sort([2, 4, 1, 6, 4, 2]),
+    [0.5, 2, 2, 13, a, {hola, hei}] = sort([a, 2, 13, 2, 0.5, {hola, hei}]),
+
+    io:fwrite("Trying fib_with_index...\n"),
+    {0, 0} = fib_with_index(0),
+    {1, 1} = fib_with_index(1),
+    {2, 1} = fib_with_index(2),
+    {8, 21} = fib_with_index(8),
+
+    io:fwrite("Trying keyfind...\n"),
+    false = keyfind(2, []),
+    false = keyfind(2, [{test, something}]),
+    hello = keyfind(2, [{2, hello}]),
+    hello = keyfind(2, [{2, hello}, {2, world}]),
+    "world" = keyfind(hello, [{2, 24}, {hello, "world"}, {5, 6}]),
+
+    io:fwrite("Trying merge...\n"),
+    [] = merge([], []),
+    [1] = merge([1], []),
+    [0, 1, 1, 1, 3, 4] = merge([1, 1, 3], [0, 1, 4]),
+
+    io:fwrite("Running property tests...\n"),
+    case module(exercises_prop) of
+        [] -> ok;
+        _ -> halt(1)
+    end,
+
+    io:fwrite("Tests passed.\n").

@@ -1,0 +1,13 @@
+#!/usr/bin/env escript
+
+-import(eqc, []).
+
+main([]) ->
+    Modules = [
+        my_lists_prop,
+        d_lists_prop
+    ],
+    case lists:flatmap(fun eqc:module/1, Modules) of
+        [] -> ok;
+        _ -> halt(1)
+    end.
