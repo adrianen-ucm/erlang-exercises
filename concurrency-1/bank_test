@@ -1,5 +1,6 @@
 #!/usr/bin/env escript
 
+-import(eqc, [module/1]).
 -import(bank, [
     create_bank/0,
     new_account/2,
@@ -40,5 +41,11 @@ main([]) ->
     10 = balance(Bank, Account2),
     {'EXIT', _} = catch transfer(Bank, Account1, Account3, 10),
     {'EXIT', _} = catch transfer(Bank, Account3, Account1, 10),
+
+    io:fwrite("Running property tests...\n"),
+    case module(bank_prop) of
+        [] -> ok;
+        _ -> halt(1)
+    end,
 
     io:fwrite("Tests passed.\n").
