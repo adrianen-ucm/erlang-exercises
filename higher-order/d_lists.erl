@@ -7,7 +7,7 @@
 %%%                                                                      %
 %%% I have chosen a 'dlist' implementation as an exercise on             %
 %%% higher-order functions because it is a list data structure           %
-%%% implementation in which the stored data is in fact afunction, and    %
+%%% implementation in which the stored data is in fact a function, and   %
 %%% its operations are function compositions.                            %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
